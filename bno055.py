@@ -64,7 +64,7 @@ class BNO055:
 
     _chip_id = partial(_register, register=0x00, value=None)
     _power_mode = partial(_register, register=0x3e)
-    _system_trigger = partial(_regsiter, register=0x3f)
+    _system_trigger = partial(_register, register=0x3f)
     _page_id = partial(_register, register=0x07)
     operation_mode = partial(_register, register=0x3d)
     temperature = partial(_register, register=0x34, value=None)

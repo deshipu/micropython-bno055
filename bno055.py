@@ -1,6 +1,7 @@
 from micropython import const
 import ustruct
 from functools import partial
+import time
 
 
 _CHIP_ID = const(0xa0)
@@ -89,26 +90,24 @@ class BNO055:
             raise RuntimeError("bad chip id (%x != %x)" % (chip_id, _CHIP_ID))
         self.reset()
         self._power_mode(_POWER_NORMAL)
+        time.sleep_ms(10)
         self._page_id(0)
         self._system_trigger(0x00)
+        time.sleep_ms(10)
         self.operation_mode(mode)
+        time.sleep_ms(10)
 
     def reset(self):
         self.operation_mode(CONFIG_MODE)
-        self._system_trigger = 0x20
-        while True:
-            try:
-                chip_id = self._chip_id()
-            except OSError as e:
-                if e.args[0] != 19: # errno 19 ENODEV
-                    raise
-                chip_id = 0
-            if chip_id == _CHIP_ID:
-                return
-
+        self._system_trigger(0x20)
+        time.sleep_ms(700)
+        
     def use_external_crystal(self, value):
         last_mode = self.operation_mode()
         self.operation_mode(config_mode)
+        time.sleep_ms(10)
         self._page_id(0)
         self._system_trigger(0x80 if value else 0x00)
+        time.sleep_ms(10)
         self.operation_mode(last_mode)
+        time.sleep_ms(10)
